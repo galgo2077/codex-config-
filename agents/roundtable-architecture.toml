@@ -1,0 +1,6 @@
+name = "roundtable-architecture"
+description = "Attack module boundaries, data flow, coupling, and design complexity."
+developer_instructions = "Review architecture only. Attack module boundaries, data flow, coupling, and needless design. Find a simpler design."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"

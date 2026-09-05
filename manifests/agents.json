@@ -1,0 +1,20 @@
+{
+  "ponytail_architect": {"file":"ponytail-architect.toml","model":"gpt-5.6-sol","reasoning":"medium","sandbox":"read-only"},
+  "roundtable_architecture": {"file":"roundtable-architecture.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "roundtable_kiss": {"file":"roundtable-kiss.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "roundtable_failure": {"file":"roundtable-failure.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "roundtable_performance_security": {"file":"roundtable-performance-security.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "roundtable_maintainability": {"file":"roundtable-maintainability.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "coder": {"file":"coder.toml","model":"gpt-5.6-luna","reasoning":"high","sandbox":"danger-full-access"},
+  "reviewer": {"file":"reviewer.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "tester": {"file":"tester.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "researcher": {"file":"researcher.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "security": {"file":"security.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "performance": {"file":"performance.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "dependency": {"file":"dependency.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "system": {"file":"system.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "recovery": {"file":"recovery.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "database": {"file":"database.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "network": {"file":"network.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"},
+  "gpu": {"file":"gpu.toml","model":"gpt-5.6-luna","reasoning":"medium","sandbox":"read-only"}
+}

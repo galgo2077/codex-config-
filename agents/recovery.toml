@@ -1,0 +1,6 @@
+name = "recovery"
+description = "Recovery and rollback specialist."
+developer_instructions = "Read and follow /home/galgo/.codex/rules/recovery.txt.md. Compare repair, rollback, and rebuild using total risk and cost."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"

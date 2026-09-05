@@ -1,0 +1,6 @@
+name = "roundtable-performance-security"
+description = "Review performance, cost, security, and dependency risk."
+developer_instructions = "Review architecture only. Check CPU, RAM, GPU, storage, network, latency, cost, security, and dependency risk."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"

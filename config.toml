@@ -1,0 +1,211 @@
+model = "gpt-5.6-sol"
+model_reasoning_effort = "medium"
+model_verbosity = "low"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+web_search = "live"
+allow_login_shell = true
+project_doc_max_bytes = 65536
+
+[features]
+multi_agent = true
+
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 8
+default_subagent_model = "gpt-5.6-luna"
+default_subagent_reasoning_effort = "medium"
+
+[agents.ponytail_architect]
+description = "Minimal architecture and planning"
+config_file = "./agents/ponytail-architect.toml"
+
+[agents.roundtable_architecture]
+description = "Architecture critic"
+config_file = "./agents/roundtable-architecture.toml"
+
+[agents.roundtable_kiss]
+description = "KISS and YAGNI critic"
+config_file = "./agents/roundtable-kiss.toml"
+
+[agents.roundtable_failure]
+description = "Failure and recovery critic"
+config_file = "./agents/roundtable-failure.toml"
+
+[agents.roundtable_performance_security]
+description = "Performance and security critic"
+config_file = "./agents/roundtable-performance-security.toml"
+
+[agents.roundtable_maintainability]
+description = "Maintainability critic"
+config_file = "./agents/roundtable-maintainability.toml"
+
+[agents.coder]
+description = "Implementation agent"
+config_file = "./agents/coder.toml"
+
+[agents.reviewer]
+description = "Independent reviewer"
+config_file = "./agents/reviewer.toml"
+
+[agents.tester]
+description = "Independent test agent"
+config_file = "./agents/tester.toml"
+
+[agents.researcher]
+description = "Current-source researcher"
+config_file = "./agents/researcher.toml"
+
+[agents.security]
+description = "Authorized security specialist"
+config_file = "./agents/security.toml"
+
+[agents.performance]
+description = "Performance specialist"
+config_file = "./agents/performance.toml"
+
+[agents.dependency]
+description = "Dependency specialist"
+config_file = "./agents/dependency.toml"
+
+[agents.system]
+description = "System specialist"
+config_file = "./agents/system.toml"
+
+[agents.recovery]
+description = "Recovery specialist"
+config_file = "./agents/recovery.toml"
+
+[agents.database]
+description = "Database specialist"
+config_file = "./agents/database.toml"
+
+[agents.network]
+description = "Network specialist"
+config_file = "./agents/network.toml"
+
+[agents.gpu]
+description = "GPU specialist"
+config_file = "./agents/gpu.toml"
+
+[projects."/home/galgo"]
+trust_level = "trusted"
+
+[tui]
+status_line = ["model-with-reasoning", "current-dir", "approval-mode", "five-hour-limit", "weekly-limit", "used-tokens", "estimated-thread-cost", "fast-mode"]
+status_line_use_colors = true
+
+[tui.model_availability_nux]
+gpt-6-astra = 2
+
+[mcp_servers.playwright]
+command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/playwright-mcp"
+args = ["--executable-path", "/usr/bin/chromium", "--headless"]
+required = true
+
+[mcp_servers.chrome-devtools]
+command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/chrome-devtools-mcp"
+args = ["--executablePath", "/usr/bin/chromium", "--headless", "--isolated", "--no-usage-statistics"]
+required = true
+
+[mcp_servers.puppeteer]
+command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/mcp-server-puppeteer"
+required = true
+
+[mcp_servers.puppeteer.env]
+PUPPETEER_EXECUTABLE_PATH = "/usr/bin/chromium"
+PUPPETEER_LAUNCH_OPTIONS = '{"headless":true}'
+
+[mcp_servers.searxng]
+command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/searxng-mcp"
+required = true
+
+[mcp_servers.searxng.env]
+FIRECRAWL_ENABLED = "false"
+SEARXNG_URL = "http://127.0.0.1:8081"
+
+[mcp_servers.mcpterm]
+command = "/home/galgo/.local/bin/mcpterm"
+required = true
+
+[mcp_servers.shell]
+command = "/home/galgo/.local/bin/mcp-unix-shell"
+args = ["--allowed-commands=*"]
+required = true
+
+[mcp_servers.local-shell]
+command = "/home/galgo/.local/bin/mcp-unix-shell"
+args = ["--allowed-commands=*"]
+required = true
+
+[mcp_servers.mcp-unix-shell]
+command = "/home/galgo/.local/bin/mcp-unix-shell"
+args = ["--allowed-commands=*"]
+required = true
+
+[mcp_servers.obsidian]
+command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/seekstone"
+required = true
+
+[mcp_servers.obsidian.env]
+SEEKSTONE_VAULT = "/home/galgo/Obsidian/Codex-System"
+
+[mcp_servers.roundtable]
+command = "/home/galgo/.local/share/codex-mcp/roundtable/bin/roundtable-ai"
+args = ["--agents", "codex"]
+required = true
+startup_timeout_sec = 30
+
+[mcp_servers.ponytail]
+command = "node"
+args = ["/home/galgo/.codex/plugins/cache/ponytail/ponytail/4.9.0/ponytail-mcp/index.js"]
+required = true
+
+[mcp_servers.context7]
+command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/context7-mcp"
+required = true
+
+[mcp_servers.filesystem]
+command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/mcp-server-filesystem"
+args = ["/home/galgo"]
+
+[mcp_servers.supabase]
+url = "https://mcp.supabase.com/mcp?read_only=true"
+enabled = false
+
+[mcp_servers.github]
+command = "podman"
+args = ["run", "-i", "--rm", "-p", "127.0.0.1:8085:8085", "-e", "GITHUB_OAUTH_CALLBACK_PORT", "ghcr.io/github/github-mcp-server"]
+enabled = false
+
+[mcp_servers.github.env]
+GITHUB_OAUTH_CALLBACK_PORT = "8085"
+
+[mcp_servers.security-bolt]
+command = "podman"
+args = ["run", "--rm", "-i", "--entrypoint", "bun", "--cap-add=NET_RAW", "--cap-add=NET_ADMIN", "localhost/codex-bolt:local", "run", "packages/core/src/index.ts"]
+required = true
+startup_timeout_sec = 60
+
+[mcp_servers.mobsf]
+command = "/home/galgo/.local/bin/mobsf-mcp"
+required = true
+startup_timeout_sec = 60
+
+[marketplaces.ponytail]
+source_type = "git"
+source = "https://github.com/DietrichGebert/ponytail.git"
+
+[plugins."ponytail@ponytail"]
+enabled = true
+
+[hooks.state]
+
+[hooks.state."ponytail@ponytail:hooks/claude-codex-hooks.json:session_start:0:0"]
+trusted_hash = "sha256:5f81d38f47448a1581c08ec877e044d9e04dd6f814dce3f2671f7a8edadd719b"
+
+[hooks.state."ponytail@ponytail:hooks/claude-codex-hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:6a6f42bc3b58d6262db38bfd74d7f340fcca2b09cdb134aad365063f0bfefca4"
+
+[hooks.state."ponytail@ponytail:hooks/claude-codex-hooks.json:subagent_start:0:0"]
+trusted_hash = "sha256:1423b56c1322f96c8f74c51c1e7ae9a047b904c1fa43ee9165d462fd7a6e70ef"

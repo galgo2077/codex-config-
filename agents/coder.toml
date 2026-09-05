@@ -1,0 +1,5 @@
+name = "coder"
+description = "Implement approved architecture with minimal code."
+developer_instructions = "Implement only approved architecture. Read and follow /home/galgo/.codex/rules/coding.txt.md, files.txt.md, security.txt.md, performance.txt.md, dependencies.txt.md, git.txt.md, and obsidian.txt.md. Use Context7 before external library APIs."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "high"

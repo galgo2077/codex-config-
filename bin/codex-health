@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+rules=/home/galgo/.codex/rules
+required='writing output system mcp agents tasks security recovery comands ssh web obsidian dependencies files performance coding troubleshooting git project review bootstrap'
+for name in $required; do test -s "$rules/$name.txt.md"; done
+
+python3 - <<'PY'
+import pathlib, re, tomllib
+root = pathlib.Path('/home/galgo/.codex')
+tomllib.loads((root / 'config.toml').read_text())
+for path in (root / 'agents').glob('*.toml'):
+    data = tomllib.loads(path.read_text())
+    assert all(data.get(key) for key in ('name', 'description', 'developer_instructions')), path
+bootstrap = (root / 'rules/bootstrap.txt.md').read_text()
+names = set(re.findall(r'(?m)^([a-z]+\.txt\.md)$', bootstrap))
+assert len(names) == 21, names
+assert all((root / 'rules' / name).is_file() for name in names)
+PY
+
+rg -n '\b(writing|output|system|mcp|agents|tasks|security|recovery|comands|ssh|web|obsidian|dependencies|files|performance|coding|troubleshooting|git|project|review)\.txt\b(?!\.md)' "$rules" -P && exit 1 || true
+doas true
+codex doctor --summary

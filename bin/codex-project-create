@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+test "$#" -eq 1
+case "$1" in *[!a-z0-9-]*|'') exit 2;; esac
+project=/home/galgo/Documents/Projects/$1
+test ! -e "$project"
+mkdir -p "$project/src" "$project/.codex" "$project/obsidian"
+git -C "$project" init -b main
+git -C "$project" config user.name "Codex Automation"
+git -C "$project" config user.email "codex@localhost"
+cp /home/galgo/.codex/project-template/AGENTS.md "$project/AGENTS.md"
+cp /home/galgo/.codex/project-template/config.toml "$project/.codex/config.toml"
+printf '# %s\n\nPurpose\n\nArchitecture\n\nFiles\n\nData flow\n\nChanges\n\nErrors and fixes\n\nFailure points\n\nTests\n\nDecisions\n' "$1" >"$project/obsidian/Project.md"
+git -C "$project" add AGENTS.md .codex/config.toml obsidian/Project.md
+git -C "$project" commit -m 'chore bootstrap project'
+git -C "$project" checkout -b development
+printf '%s\n' "$project"

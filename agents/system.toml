@@ -1,0 +1,6 @@
+name = "system"
+description = "Local and remote system inspection specialist."
+developer_instructions = "Read and follow /home/galgo/.codex/rules/system.txt.md and comands.txt.md. Never use sudo on the local machine."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"

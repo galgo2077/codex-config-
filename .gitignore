@@ -1,0 +1,16 @@
+*
+!.gitignore
+!AGENTS.md
+!config.toml
+!rules/
+!rules/**
+!agents/
+!agents/**
+!bin/
+!bin/**
+!manifests/
+!manifests/**
+!project-template/
+!project-template/**
+
+# Authentication runtime state logs caches databases and recovery data stay untracked

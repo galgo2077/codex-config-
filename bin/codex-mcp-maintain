@@ -1,0 +1,31 @@
+#!/bin/sh
+set -eu
+
+state=/home/galgo/.codex/manifests/mcp-maintenance.log
+node_root=/home/galgo/.local/share/codex-mcp/node
+lock=/home/galgo/.codex/manifests/mcp-maintenance.lock
+exec 9>"$lock"
+flock -n 9 || exit 0
+
+now=$(date --iso-8601=seconds)
+{
+  printf '%s update-check\n' "$now"
+  codex --version
+  npm --prefix "$node_root" outdated || true
+  npm --prefix "$node_root" audit --omit=dev || true
+  git -C /home/galgo/.codex/plugins/cache/ponytail/ponytail/4.9.0 fetch --quiet --tags origin || true
+} >>"$state" 2>&1
+
+test "${1:-}" = --apply || exit 0
+stage=$(mktemp -d)
+trap 'rm -rf "$stage"' EXIT
+cp "$node_root/package.json" "$node_root/package-lock.json" "$stage/"
+npm --prefix "$stage" update --package-lock-only
+npm --prefix "$stage" ci
+for bin in playwright-mcp chrome-devtools-mcp mcp-server-puppeteer searxng-mcp context7-mcp seekstone; do
+  timeout 15 "$stage/node_modules/.bin/$bin" --help >/dev/null 2>&1 || test "$?" -eq 124
+done
+cp "$stage/package-lock.json" "$node_root/package-lock.json.new"
+mv "$node_root/package-lock.json.new" "$node_root/package-lock.json"
+npm --prefix "$node_root" ci
+/home/galgo/.codex/bin/codex-health >>"$state" 2>&1

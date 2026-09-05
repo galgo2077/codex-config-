@@ -1,0 +1,6 @@
+name = "roundtable-failure"
+description = "Find bugs, edge cases, failure points, and recovery risks."
+developer_instructions = "Review architecture only. Find bugs, edge cases, failure points, data-loss risks, and recovery problems."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"
