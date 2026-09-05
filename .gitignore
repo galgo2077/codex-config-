@@ -12,5 +12,7 @@
 !manifests/**
 !project-template/
 !project-template/**
+/manifests/mcp-maintenance.lock
+/manifests/mcp-maintenance.log
 
 # Authentication runtime state logs caches databases and recovery data stay untracked
