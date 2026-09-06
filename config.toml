@@ -5,14 +5,18 @@ approval_policy = "never"
 sandbox_mode = "danger-full-access"
 web_search = "live"
 allow_login_shell = true
-project_doc_max_bytes = 65536
+project_doc_max_bytes = 16384
+tool_output_token_limit = 6000
+
+[skills]
+max_context_tokens = 4000
 
 [features]
 multi_agent = true
 
 [agents]
 enabled = true
-max_concurrent_threads_per_session = 8
+max_concurrent_threads_per_session = 2
 default_subagent_model = "gpt-5.6-luna"
 default_subagent_reasoning_effort = "medium"
 
@@ -88,7 +92,13 @@ config_file = "./agents/network.toml"
 description = "GPU specialist"
 config_file = "./agents/gpu.toml"
 
+[shell_environment_policy.set]
+CODEX_CREDENTIAL_HELPER = "/home/galgo/.codex/bin/codex-secret"
+
 [projects."/home/galgo"]
+trust_level = "trusted"
+
+[projects."/home/galgo/Documents/Hercules-3.0-Rebuilt"]
 trust_level = "trusted"
 
 [tui]
@@ -96,20 +106,23 @@ status_line = ["model-with-reasoning", "current-dir", "approval-mode", "five-hou
 status_line_use_colors = true
 
 [tui.model_availability_nux]
-gpt-6-astra = 2
+gpt-6-astra = 4
 
 [mcp_servers.playwright]
 command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/playwright-mcp"
 args = ["--executable-path", "/usr/bin/chromium", "--headless"]
+enabled = false
 required = true
 
 [mcp_servers.chrome-devtools]
 command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/chrome-devtools-mcp"
 args = ["--executablePath", "/usr/bin/chromium", "--headless", "--isolated", "--no-usage-statistics"]
+enabled = false
 required = true
 
 [mcp_servers.puppeteer]
 command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/mcp-server-puppeteer"
+enabled = false
 required = true
 
 [mcp_servers.puppeteer.env]
@@ -118,6 +131,7 @@ PUPPETEER_LAUNCH_OPTIONS = '{"headless":true}'
 
 [mcp_servers.searxng]
 command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/searxng-mcp"
+enabled = false
 required = true
 
 [mcp_servers.searxng.env]
@@ -126,25 +140,30 @@ SEARXNG_URL = "http://127.0.0.1:8081"
 
 [mcp_servers.mcpterm]
 command = "/home/galgo/.local/bin/mcpterm"
+enabled = false
 required = true
 
 [mcp_servers.shell]
 command = "/home/galgo/.local/bin/mcp-unix-shell"
 args = ["--allowed-commands=*"]
+enabled = false
 required = true
 
 [mcp_servers.local-shell]
 command = "/home/galgo/.local/bin/mcp-unix-shell"
 args = ["--allowed-commands=*"]
+enabled = false
 required = true
 
 [mcp_servers.mcp-unix-shell]
 command = "/home/galgo/.local/bin/mcp-unix-shell"
 args = ["--allowed-commands=*"]
+enabled = false
 required = true
 
 [mcp_servers.obsidian]
 command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/seekstone"
+enabled = false
 required = true
 
 [mcp_servers.obsidian.env]
@@ -153,21 +172,25 @@ SEEKSTONE_VAULT = "/home/galgo/Obsidian/Codex-System"
 [mcp_servers.roundtable]
 command = "/home/galgo/.local/share/codex-mcp/roundtable/bin/roundtable-ai"
 args = ["--agents", "codex"]
+enabled = false
 required = true
 startup_timeout_sec = 30
 
 [mcp_servers.ponytail]
 command = "node"
 args = ["/home/galgo/.codex/plugins/cache/ponytail/ponytail/4.9.0/ponytail-mcp/index.js"]
+enabled = false
 required = true
 
 [mcp_servers.context7]
 command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/context7-mcp"
+enabled = false
 required = true
 
 [mcp_servers.filesystem]
 command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/mcp-server-filesystem"
 args = ["/home/galgo"]
+enabled = false
 
 [mcp_servers.supabase]
 url = "https://mcp.supabase.com/mcp?read_only=true"
@@ -184,11 +207,13 @@ GITHUB_OAUTH_CALLBACK_PORT = "8085"
 [mcp_servers.security-bolt]
 command = "podman"
 args = ["run", "--rm", "-i", "--entrypoint", "bun", "--cap-add=NET_RAW", "--cap-add=NET_ADMIN", "localhost/codex-bolt:local", "run", "packages/core/src/index.ts"]
+enabled = false
 required = true
 startup_timeout_sec = 60
 
 [mcp_servers.mobsf]
 command = "/home/galgo/.local/bin/mobsf-mcp"
+enabled = false
 required = true
 startup_timeout_sec = 60
 

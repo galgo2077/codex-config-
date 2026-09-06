@@ -2,22 +2,46 @@
 set -eu
 
 rules=/home/galgo/.codex/rules
-required='writing output system mcp agents tasks security recovery comands ssh web obsidian dependencies files performance coding troubleshooting git project review bootstrap'
+required='writing output system mcp agents tasks security recovery comands ssh web obsidian dependencies files performance coding troubleshooting git project review credentials core tokensSave bootstrap'
 for name in $required; do test -s "$rules/$name.txt.md"; done
 
 python3 - <<'PY'
 import pathlib, re, tomllib
 root = pathlib.Path('/home/galgo/.codex')
-tomllib.loads((root / 'config.toml').read_text())
+config = tomllib.loads((root / 'config.toml').read_text())
+servers = config['mcp_servers']
+assert all(server.get('enabled') is False for server in servers.values()), 'base MCPs must be disabled'
+profiles = {
+    'context': {'obsidian'},
+    'architecture': {'ponytail'},
+    'architecture-review': {'ponytail', 'roundtable'},
+    'docs': {'context7'},
+    'search': {'searxng'},
+    'browser': {'playwright'},
+    'browser-debug': {'chrome-devtools'},
+    'ssh': {'mcpterm'},
+    'security': {'security-bolt'},
+    'mobile-security': {'mobsf'},
+}
+for name, expected in profiles.items():
+    data = tomllib.loads((root / f'{name}.config.toml').read_text())
+    enabled = {key for key, value in data['mcp_servers'].items() if value.get('enabled') is True}
+    assert enabled == expected, (name, enabled, expected)
+    assert len(enabled) <= 2, (name, enabled)
+project = tomllib.loads((root / 'project-template/config.toml').read_text())
+assert project['mcp_servers']['project-obsidian']['enabled'] is False
 for path in (root / 'agents').glob('*.toml'):
     data = tomllib.loads(path.read_text())
     assert all(data.get(key) for key in ('name', 'description', 'developer_instructions')), path
 bootstrap = (root / 'rules/bootstrap.txt.md').read_text()
-names = set(re.findall(r'(?m)^([a-z]+\.txt\.md)$', bootstrap))
-assert len(names) == 21, names
+names = set(re.findall(r'`([A-Za-z]+\.txt\.md)`', bootstrap))
+assert len(names) == 24, names
 assert all((root / 'rules' / name).is_file() for name in names)
+assert config['shell_environment_policy']['set']['CODEX_CREDENTIAL_HELPER'] == str(root / 'bin/codex-secret')
+assert (root / 'bin/codex-secret').stat().st_mode & 0o777 == 0o700
 PY
 
 rg -n '\b(writing|output|system|mcp|agents|tasks|security|recovery|comands|ssh|web|obsidian|dependencies|files|performance|coding|troubleshooting|git|project|review)\.txt\b(?!\.md)' "$rules" -P && exit 1 || true
 doas true
+busctl --user --quiet status org.freedesktop.secrets
 codex doctor --summary

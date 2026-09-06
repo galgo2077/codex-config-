@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+for arg do
+  case $arg in --no-ignore|--no-ignore-*|-uuu) printf '%s\n' "codex-context-rg: unsafe option: $arg" >&2; exit 2;; esac
+done
+root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+  root=$PWD
+  while test "$root" != / && test ! -e "$root/.codexignore"; do root=$(dirname "$root"); done
+  test "$root" != / || root=$PWD
+}
+if test -e "$root/.codexignore"; then
+  cd "$root"
+  exec rg --ignore-file .codexignore "$@"
+fi
+exec rg "$@"

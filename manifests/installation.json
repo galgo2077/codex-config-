@@ -24,12 +24,19 @@
     "filesystem": "2026.8.31",
     "security-bolt_upstream_image_created": "2026-04-03T14:00:06Z"
   },
-  "mcp_health": "required startup and safe integration checks pass",
+  "mcp_health": "base has 17 disabled servers; phase profiles parse and select at most two",
+  "mcp_profiles": ["context", "architecture", "architecture-review", "docs", "search", "browser", "browser-debug", "ssh", "security", "mobile-security"],
   "mcp_local_patch": "localhost/codex-bolt:local disables redundant sudo for in-container Nmap",
+  "mobsf_secret_transport": "inherited fd 3; absent from process arguments",
   "system_vault": "/home/galgo/Obsidian/Codex-System",
   "project_template": "/home/galgo/.codex/project-template",
   "project_root": "/home/galgo/Documents/Projects",
   "secret_backend": "freedesktop Secret Service",
+  "credential_command": "/home/galgo/.codex/bin/codex-secret",
+  "codexignore_template": "/home/galgo/.codex/project-template/.codexignore",
+  "codexignore_sync_command": "/home/galgo/.codex/bin/codex-ignore-sync",
+  "context_search_command": "/home/galgo/.codex/bin/codex-context-rg",
+  "context_files_command": "/home/galgo/.codex/bin/codex-context-files",
   "maintenance_command": "/home/galgo/.codex/bin/codex-mcp-maintain",
-  "last_complete_health_check": "2026-09-04T18:07:57-06:00"
+  "last_complete_health_check": "2026-09-06T15:56:18-06:00"
 }

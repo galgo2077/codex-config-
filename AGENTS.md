@@ -1,11 +1,15 @@
-# Codex bootstrap
+# Global Codex Instructions
 
-Before every task:
+Correctness first. Use KISS and YAGNI.
 
-1. Read `/home/galgo/.codex/rules/bootstrap.txt.md` and every rule it lists.
-2. Verify the required rule files and MCP health.
-3. Load `/home/galgo/Obsidian/Codex-System` context plus project vault context when inside a project.
-4. Inspect the local system and current Git state, then decompose the task.
-5. Use the minimum useful multi-agent team by default.
+At session bootstrap:
 
-Do not write project code until bootstrap passes. If a required MCP fails, repair and verify it before resuming from the last safe state.
+- Read `/home/galgo/.codex/rules/bootstrap.txt.md` once.
+- Load its three `Always` rules once, in order.
+- Load `/home/galgo/Obsidian/Codex-System/INDEX.md` once.
+
+For each task classify only what affects the next concrete action. Lazy-load only the specialized modules whose router triggers apply.
+
+Do not preload specialized modules. Do not reload unchanged modules already loaded in this session. Configured capabilities are not automatically active capabilities.
+
+Higher-level instructions override these files. More specific applicable rules override general rules.

@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+
+root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+  root=$PWD
+  while test "$root" != / && test ! -e "$root/.codexignore"; do root=$(dirname "$root"); done
+  test "$root" != / || root=$PWD
+}
+cd "$root"
+if test -e .codexignore; then
+  printf '%s\n' .codexignore
+  rg --files --hidden --glob '!.git/**' --glob '!.codexignore' --ignore-file .codexignore "$@" || test "$?" -eq 1
+  exit
+fi
+exec rg --files --hidden --glob '!.git/**' "$@"

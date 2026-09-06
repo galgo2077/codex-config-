@@ -2,6 +2,7 @@
 !.gitignore
 !AGENTS.md
 !config.toml
+!/*.config.toml
 !rules/
 !rules/**
 !agents/

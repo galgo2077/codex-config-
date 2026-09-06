@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+import re
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+root = Path(next((a for a in sys.argv[1:] if not a.startswith("--")), "/home/galgo/Obsidian/Codex-System"))
+trim = "--trim" in sys.argv
+required = {"INDEX", "SYSTEM", "CHANGES", "HOT_FILES", "RECOVERY", "MCP", "INSTALL", "SSH", "Session"}
+errors = []
+
+
+def load():
+    return {p.stem: p.read_text() for p in root.glob("*.md")}
+
+
+docs = load()
+changes_path = root / "CHANGES.md"
+matches = list(re.finditer(r"(?m)^## (chg-[^\s]+)$", docs.get("CHANGES", "")))
+if trim and len(matches) > 100:
+    text = docs["CHANGES"]
+    entries = [text[m.start():(matches[i + 1].start() if i + 1 < len(matches) else len(text))] for i, m in enumerate(matches)]
+    changes_path.write_text(text[:matches[0].start()] + "".join(entries[-100:]))
+    docs = load()
+    matches = list(re.finditer(r"(?m)^## (chg-[^\s]+)$", docs.get("CHANGES", "")))
+
+if set(docs) != required:
+    errors.append(f"notes expected={sorted(required)} actual={sorted(docs)}")
+
+ids = [m.group(1) for m in matches]
+if len(ids) > 100:
+    errors.append(f"changes={len(ids)}>100")
+if len(ids) != len(set(ids)):
+    errors.append("duplicate change id")
+
+change_entries = []
+for i, match in enumerate(matches):
+    block = docs["CHANGES"][match.start():(matches[i + 1].start() if i + 1 < len(matches) else len(docs["CHANGES"]))]
+    fields = dict(re.findall(r"(?m)^([a-z_]+):(.*)$", block))
+    missing = [k for k in ("t", "scope", "action", "target", "files", "delta", "reason", "result", "rollback", "links") if not fields.get(k)]
+    if missing:
+        errors.append(f"{match.group(1)} missing={','.join(missing)}")
+    if fields.get("result") not in {"ok", "fail", "partial"}:
+        errors.append(f"{match.group(1)} bad result")
+    change_entries.append((match.group(1), fields.get("files", "").split(",")))
+
+last = re.search(r"(?m)^last_change:(chg-[^\s]+)$", docs.get("INDEX", ""))
+if not last or not ids or last.group(1) != ids[-1]:
+    errors.append("INDEX last_change != newest change")
+
+links = re.compile(r"\[\[([^\]|]+)(?:\|[^\]]+)?\]\]")
+graph = defaultdict(set)
+for source, text in docs.items():
+    for raw in links.findall(text):
+        target, _, anchor = raw.partition("#")
+        graph[source].add(target)
+        if target not in docs:
+            errors.append(f"broken link {source}->{raw}")
+        elif anchor and anchor not in set(re.findall(r"(?m)^#{1,6} (.+)$", docs[target])):
+            errors.append(f"broken anchor {source}->{raw}")
+
+seen = {"INDEX"}
+todo = ["INDEX"]
+while todo:
+    for target in graph[todo.pop()]:
+        if target in docs and target not in seen:
+            seen.add(target)
+            todo.append(target)
+if seen != required:
+    errors.append(f"unreachable={sorted(required - seen)}")
+
+hot_text = docs.get("HOT_FILES", "")
+hot_matches = list(re.finditer(r"(?m)^## (/.*)$", hot_text))
+if len(hot_matches) > 20:
+    errors.append(f"hot_files={len(hot_matches)}>20")
+for i, match in enumerate(hot_matches):
+    path = match.group(1)
+    block = hot_text[match.start():(hot_matches[i + 1].start() if i + 1 < len(hot_matches) else len(hot_text))]
+    fields = dict(re.findall(r"(?m)^([a-z_]+):(.*)$", block))
+    related = [change_id for change_id, paths in change_entries if path in paths]
+    if not Path(path).exists():
+        errors.append(f"missing hot file {path}")
+    count = fields.get("changes", "")
+    if not count.isdigit() or int(count) != len(related):
+        errors.append(f"bad count {path}")
+    expected_last = related[-1] if related else "none"
+    if fields.get("last") != expected_last:
+        errors.append(f"bad last {path}")
+    history = re.findall(r"\[\[CHANGES#(chg-[^\]]+)\]\]", fields.get("history", ""))
+    if history != related:
+        errors.append(f"bad history {path}")
+    if len(related) < 2 and "critical" not in fields.get("role", "").split(","):
+        errors.append(f"non-candidate {path}")
+
+facts = defaultdict(list)
+for name in ("SYSTEM", "MCP", "INSTALL", "SSH", "RECOVERY"):
+    for line in docs.get(name, "").splitlines():
+        if line and not line.startswith("#") and not line.startswith("links:") and ":" in line:
+            facts[line].append(name)
+for fact, owners in facts.items():
+    if len(owners) > 1:
+        errors.append(f"duplicate fact {owners}: {fact}")
+
+if errors:
+    print("\n".join(f"FAIL {error}" for error in errors))
+    raise SystemExit(1)
+print(f"ok notes={len(docs)} links={sum(len(v) for v in graph.values())} changes={len(ids)} hot_files={len(hot_matches)}")

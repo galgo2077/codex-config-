@@ -1,6 +1,19 @@
 {
   "checked_at":"2026-09-04T18:03:00-06:00",
   "config":"/home/galgo/.codex/config.toml",
+  "default_enabled":[],
+  "profiles":{
+    "context":["obsidian"],
+    "architecture":["ponytail"],
+    "architecture-review":["ponytail","roundtable"],
+    "docs":["context7"],
+    "search":["searxng"],
+    "browser":["playwright"],
+    "browser-debug":["chrome-devtools"],
+    "ssh":["mcpterm"],
+    "security":["security-bolt"],
+    "mobile-security":["mobsf"]
+  },
   "servers": {
     "playwright":{"version":"0.0.80","source":"microsoft/playwright-mcp","install":"npm","command":"playwright-mcp","dependencies":["chromium"],"required":true,"health":"pass"},
     "chrome-devtools":{"version":"1.8.0","source":"ChromeDevTools/chrome-devtools-mcp","install":"npm","command":"chrome-devtools-mcp","dependencies":["chromium"],"required":true,"health":"pass"},
@@ -15,7 +28,7 @@
     "local-shell":{"version":"local","source":"mcp-unix-shell","install":"local executable","command":"mcp-unix-shell --allowed-commands=*","dependencies":[],"required":true,"health":"pass"},
     "mcp-unix-shell":{"version":"local","source":"mcp-unix-shell","install":"local executable","command":"mcp-unix-shell --allowed-commands=*","dependencies":[],"required":true,"health":"pass"},
     "mcpterm":{"version":"local","source":"mcpterm","install":"local executable","command":"mcpterm","dependencies":["ssh"],"required":true,"health":"pass"},
-    "mobsf":{"version":"local","source":"MobSF MCP","install":"local executable","command":"mobsf-mcp","dependencies":["MobSF"],"required":true,"health":"pass"},
+    "mobsf":{"version":"local","source":"MobSF MCP","install":"local executable","command":"mobsf-mcp","dependencies":["MobSF"],"required":true,"health":"pass","secret_transport":"inherited fd 3"},
     "security-bolt":{"version":"upstream image 2026-04-03","source":"CyberStrikeHQ/bolt","install":"Podman image","command":"podman run localhost/codex-bolt:local","dependencies":["nmap","katana","ffuf","sqlmap","nuclei","HTTP headers tools"],"required":true,"health":"pass","fork":true,"local_patch":"disable redundant sudo inside root container","patch_path":"/home/galgo/.local/share/codex-mcp/bolt-local"}
   },
   "disabled": {"github":"preserved; authentication not configured","supabase":"preserved; remote cleanup endpoint returned 404"}

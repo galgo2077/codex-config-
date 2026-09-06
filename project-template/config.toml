@@ -1,5 +1,6 @@
 [mcp_servers.project-obsidian]
 command = "/home/galgo/.local/share/codex-mcp/node/node_modules/.bin/seekstone"
+enabled = false
 required = true
 
 [mcp_servers.project-obsidian.env]

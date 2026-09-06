@@ -1,0 +1,33 @@
+#!/bin/sh
+set -eu
+
+root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+  printf '%s\n' 'codexignore: not a Git project' >&2
+  exit 2
+}
+ignore=$root/.codexignore
+test -e "$ignore" || cp /home/galgo/.codex/project-template/.codexignore "$ignore"
+exclude=$(git -C "$root" rev-parse --git-path info/exclude)
+case $exclude in /*) ;; *) exclude=$root/$exclude ;; esac
+mkdir -p "${exclude%/*}"
+tmp=$(mktemp "${exclude}.codexignore.XXXXXX")
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+
+test ! -e "$exclude" || awk '
+  $0 == "# CODEXIGNORE BEGIN" { managed=1; next }
+  $0 == "# CODEXIGNORE END" { managed=0; next }
+  !managed { print }
+' "$exclude" >"$tmp"
+test ! -s "$tmp" || test "$(tail -c 1 "$tmp" | wc -l)" -eq 1 || printf '\n' >>"$tmp"
+printf '%s\n' '# CODEXIGNORE BEGIN' >>"$tmp"
+cat "$ignore" >>"$tmp"
+test ! -s "$ignore" || test "$(tail -c 1 "$ignore" | wc -l)" -eq 1 || printf '\n' >>"$tmp"
+printf '%s\n' '# CODEXIGNORE END' >>"$tmp"
+
+if test -e "$exclude" && cmp -s "$tmp" "$exclude"; then
+  exit 0
+fi
+test ! -e "$exclude" || chmod --reference="$exclude" "$tmp"
+mv -f "$tmp" "$exclude"
+trap - EXIT HUP INT TERM
+

@@ -1,0 +1,5 @@
+[mcp_servers.ponytail]
+enabled = true
+
+[mcp_servers.roundtable]
+enabled = true
