@@ -30,4 +30,3 @@ fi
 test ! -e "$exclude" || chmod --reference="$exclude" "$tmp"
 mv -f "$tmp" "$exclude"
 trap - EXIT HUP INT TERM
-
