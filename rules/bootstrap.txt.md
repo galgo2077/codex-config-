@@ -30,4 +30,6 @@ Never load a module just in case. Never treat module availability as a requireme
 
 Project bootstrap flow: read the project index, then follow `context.txt.md`. Do not load a project vault, repository, Git history, MCP, or specialized rule merely because it exists.
 
+For project work, the nearest applicable project `AGENTS.md` adds project-specific constraints. On a direct conflict with these shared rules, follow that project instruction unless a higher-level instruction applies, and report the conflict and resolution to the user.
+
 `tasks.txt.md` is a compatibility pointer only. Do not load it.
